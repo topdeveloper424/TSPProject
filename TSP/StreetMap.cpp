@@ -41,6 +41,7 @@ public:
 	void insert_node(std::size_t, StreetSegment);
 	void insert_edge(std::size_t, std::size_t, StreetSegment);
 	void display();
+	void reverse(StreetSegment&);
 	StreetMapImpl* find(std::size_t);
 	bool isEdge(std::size_t, std::size_t);
 	
@@ -62,6 +63,13 @@ StreetMapImpl::StreetMapImpl(std::size_t node_name, StreetSegment streetseg)
 
 StreetMapImpl::~StreetMapImpl()
 {
+}
+
+void StreetMapImpl::reverse(StreetSegment& temp){
+	GeoCoord tempGEO;
+	tempGEO = temp.start;
+	temp.start = temp.end;
+	temp.end = tempGEO;
 }
 
 void StreetMapImpl::insert_node(std::size_t node_name, StreetSegment streetSeg){
@@ -218,7 +226,7 @@ bool StreetMapImpl::load(string mapFile)
 				temp.start = GeoCoord(geovalue[0],geovalue[1]);
 				
 				temp.end = GeoCoord(geovalue[2], geovalue[3]);
-
+				this->reverse(temp);
 				std::size_t hash_val_u, hash_val_v;
 				
 				hash_val_u = gethash(temp.start);
@@ -269,30 +277,30 @@ bool StreetMapImpl::getSegmentsThatStartWith(const GeoCoord& gc, vector<StreetSe
 {
 	StreetMapImpl *loc_gc = NULL;
 	loc_gc = loc_gc->find(gethash(gc));
-
+	
 	StreetMapImpl *ptr;
 	edge *q;
 	int cnt = 1;
-	ptr = loc_gc;
+	if (loc_gc){
+		ptr = loc_gc;
 
-	while (ptr != NULL && cnt > 0)
-	{
-		
-		//cout << ptr->seg.start.latitudeText << ":" << ptr->seg.start.longitudeText << endl;
-
-		q = ptr->adj;
-		while (q != NULL)
+		while (ptr != NULL && cnt > 0)
 		{
-			//cout << q->seg.end.latitudeText << ":" << q->seg.end.longitudeText << endl;
-			segs.push_back(q->seg);
-			q = q->link;
+			//cout << ptr->seg.start.latitudeText << ":" << ptr->seg.end.longitudeText << endl;
+			q = ptr->adj;
+			while (q != NULL)
+			{
+				cout << q->seg.end.latitudeText << ":" << q->seg.end.longitudeText << endl;
+				segs.push_back(q->seg);
+				q = q->link;
+			}
+			ptr = ptr->next;
+			cnt--;
 		}
-		cout << endl;
-		ptr = ptr->next;
-		cnt--;
+		return true;
 	}
-	
-    return false;  // Delete this line and implement this function correctly
+	else
+	    return false;  // Delete this line and implement this function correctly
 }
 
 //******************** StreetMap functions ************************************
