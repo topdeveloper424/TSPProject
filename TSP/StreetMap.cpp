@@ -36,6 +36,7 @@ public:
 	StreetMapImpl();
 	StreetMapImpl(std::size_t, StreetSegment);
     ~StreetMapImpl();
+
     bool load(string mapFile);
     bool getSegmentsThatStartWith(const GeoCoord& gc, vector<StreetSegment>& segs) const;
 	void insert_node(std::size_t, StreetSegment);
